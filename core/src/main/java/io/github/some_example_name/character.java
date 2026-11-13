@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class character
 {
-    Rectangle bottom, left, right, top;
+    Rectangle bottom, left, right, top, full;
     Sprite sprite;
     Texture texture;
     int action;
@@ -21,25 +21,51 @@ public class character
     //Entry Point
     public character()
     {
-        bottom = new Rectangle(0.0f, 0.0f, 128.0f, 128.0f);
+        full = new Rectangle(0.0f, 0.0f, 128.0f, 128.0f);
+        bottom =  new Rectangle(0,0,128,16);
+        left = new Rectangle(0, 16, 64, 96);
+        right = new Rectangle(64, 16, 64, 96);
+        top = new Rectangle(0, 112, 128, 16);
+
         texture = new Texture(Gdx.files.internal("character.png"));
         sprite = new Sprite(texture,0, 0, 128, 128);
         this.setPosition(0, 0);
-
+        velocityY = 0;
     }
 
     public int hits (Rectangle r)
     {
+        if (left.overlaps(r))
+        {
+            return 2;
+        }
+        if (right.overlaps(r))
+        {
+            return 3;
+        }
         if (bottom.overlaps(r))
         {
             return 1;
         }
+        if (top.overlaps(r))
+        {
+            return 4;
+        }
         return -1;
     }
     //colission
-    public void action(int type)
+    public void action(int type, float x, float y)
     {
-
+        if (type == 1 || type == 4 )
+        {
+            velocityY = 0;
+            setPosition(bottom.x, y);
+        }
+        if (type == 2 || type == 3)
+        {
+            velocityY = 0;
+            setPosition(x, bottom.y);
+        }
     }
     //natural movement
     public void update(float delta)
@@ -90,4 +116,10 @@ public class character
     {
         sprite.draw(batch);
     }
+
+    public Rectangle getHitBox()
+    {
+        return full;
+    }
+
 }
